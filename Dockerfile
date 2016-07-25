@@ -2,42 +2,60 @@ FROM                java:8
 
 MAINTAINER          Ismar Slomic <ismar.slomic@accenture.com>
 
-# Configuration variables.
-ENV JIRA_HOME       /var/atlassian/jira
-ENV JIRA_INSTALL    /opt/atlassian/jira
-ENV TEMP_FOLDER     /tmp
-ENV TEMP_FILE       jira.tar.gz
-ENV JIRA_VERSION    7.1.9
+# Install dependencies, download and extract JIRA Software and create the required directory layout.
+# Try to limit the number of RUN instructions to minimise the number of layers that will need to be created.
+RUN apt-get update -qq \
+    && apt-get install -y --no-install-recommends libtcnative-1 xmlstarlet vim \
+    && apt-get clean autoclean \
+    && apt-get autoremove --yes \
+    && rm -rf /var/lib/{apt,dpkg,cache,log}/
 
-# Install dependencies
-RUN                 apt-get update && apt-get install -y curl tar xmlstarlet vim \
-                    && apt-get clean
+# Use the default unprivileged account. This could be considered bad practice
+# on systems where multiple processes end up being executed by 'daemon' but
+# here we only ever run one process anyway.
+ENV RUN_USER        daemon
+ENV RUN_GROUP       daemon
 
-# Create the user that will run the jira instance and his home directory (also make sure that the parent directory exists)
-RUN                 mkdir -p $(dirname $JIRA_HOME) \
-                    && useradd -m -d $JIRA_HOME -s /bin/bash -u 547 jira
+# Data directory for JIRA Software
+# https://confluence.atlassian.com/adminjiraserver071/jira-application-home-directory-802593036.html
+ENV JIRA_HOME          /var/atlassian/application-data/jira
 
-# Download and install jira in /opt with proper permissions and clean unnecessary files
-RUN                 curl -Lks https://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-software-$JIRA_VERSION.tar.gz -o $TEMP_FOLDER/$TEMP_FILE \
-                    && mkdir -p $JIRA_INSTALL \
-                    && tar -zxf $TEMP_FOLDER/$TEMP_FILE --strip=1 -C $JIRA_INSTALL \
-                    && chown -R root:root $JIRA_INSTALL \
-                    && chown -R 547:root $JIRA_INSTALL/logs $JIRA_INSTALL/temp $JIRA_INSTALL/work \
-                    && rm $TEMP_FOLDER/$TEMP_FILE \
-                    && sed --in-place "s/java version/openjdk version/g" "${JIRA_INSTALL}/bin/check-java.sh" \
-                    && echo -e "\njira.home=$JIRA_HOME" >> "${JIRA_INSTALL}/atlassian-jira/WEB-INF/classes/jira-application.properties"
+# Install Atlassian JIRA Software to the following location
+# https://confluence.atlassian.com/adminjiraserver071/jira-application-installation-directory-802593035.html
+ENV JIRA_INSTALL_DIR   /opt/atlassian/jira
+
+ENV JIRA_VERSION       7.1.9
+ENV DOWNLOAD_URL       https://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-software-${JIRA_VERSION}.tar.gz
+
+
+RUN mkdir -p                             ${JIRA_INSTALL_DIR} \
+    && curl -L --silent                  ${DOWNLOAD_URL} | tar -xz --strip=1 -C "$JIRA_INSTALL_DIR" \
+    && mkdir -p                          ${JIRA_INSTALL_DIR}/conf/Catalina      \
+    && chmod -R 700                      ${JIRA_INSTALL_DIR}/conf/Catalina      \
+    && chmod -R 700                      ${JIRA_INSTALL_DIR}/logs               \
+    && chmod -R 700                      ${JIRA_INSTALL_DIR}/temp               \
+    && chmod -R 700                      ${JIRA_INSTALL_DIR}/work               \
+    && chown -R ${RUN_USER}:${RUN_GROUP} ${JIRA_INSTALL_DIR}/                   \
+    && sed --in-place          "s/java version/openjdk version/g" "${JIRA_INSTALL_DIR}/bin/check-java.sh" \
+    && echo -e                 "\njira.home=$JIRA_HOME" >> "${JIRA_INSTALL_DIR}/atlassian-jira/WEB-INF/classes/jira-application.properties" \
+    && ln --symbolic           "/usr/lib/x86_64-linux-gnu/libtcnative-1.so" "${JIRA_INSTALL_DIR}/lib/libtcnative-1.so"
 
 # Add jira customizer and launcher
-COPY                files/launch.sh /launch
+COPY        files/launch.sh /launch
 
 # Make jira customizer and launcher executable
-RUN                 chmod +x /launch
+RUN         chmod +x /launch
 
-# Expose ports
-EXPOSE              8080
+USER        ${RUN_USER}:${RUN_GROUP}
 
-# Workdir
-WORKDIR             $JIRA_INSTALL
+# Set volume mount points for installation and home directory. Changes to the
+# home directory needs to be persisted
+VOLUME      ["${JIRA_HOME}"]
+
+# HTTP Port
+EXPOSE      8080
+
+WORKDIR     $JIRA_INSTALL_DIR
 
 # Launch jira
-ENTRYPOINT          ["/launch"]
+ENTRYPOINT  ["/launch"]

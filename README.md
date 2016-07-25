@@ -5,11 +5,20 @@
 * Runs on *Oracle Java* 8.
 * Ready to be configured with *Nginx* as a reverse proxy (https available).
 
-## Usage
+## Quick Start
+For the `JIRA_HOME` directory that is used to store the data we recommend mounting a host directory as a [data volume](https://docs.docker.com/engine/tutorials/dockervolumes/) :
+Set permissions for the data directory so that the runuser can write to it:
+```bash
+$> docker run -u root -v /data/jira:/var/atlassian/application-data/jira acntech/adop-jira chown -R daemon /var/atlassian/application-data/jira
+```
+Start Atlassian JIRA Software:
 
 ```bash
-docker run -d -p 8080:8080 acntech/adop-jira
+$> docker run -v /data/jira:/var/atlassian/application-data/jira --name="jira" -d -p 8080:8080 acntech/adop-jira
 ```
+Success. JIRA Software is now available on http://localhost:8080*
+Please ensure your container has the necessary resources allocated to it. We recommend 2GB of memory allocated. See [System Requirements](https://confluence.atlassian.com/adminjiraserver071/jira-applications-installation-requirements-802592164.html) for further information.
+_* Note: If you are using docker-machine on Mac OS X, please use open http://$(docker-machine ip default):8080 instead._
 
 ### Parameters
 
@@ -23,7 +32,7 @@ You can use this parameters to configure your jira instance:
 This parameters should be given to the entrypoint (passing them after the image):
 
 ```bash
-docker run -d -p 8080:8080 acntech/adop-jira <parameters>
+$> docker run -d -p 8080:8080 acntech/adop-jira <parameters>
 ```
 
 > If you want to execute another command instead of launching jira you should overwrite the entrypoint with `--entrypoint <command>` (docker run parameter).
@@ -60,25 +69,24 @@ server {
 For that configuration you should run your jira container with:
 
 ```bash
-docker run -d -p 8080:8080 acntech/adop-jira -s -n example.com -p 443 -c jira
+$> docker run -d -p 8080:8080 acntech/adop-jira -s -n example.com -p 443 -c jira
 ```
 
-### Persistent data
 
-The jira home is set to `/var/atlassian/jira` and installation to `/opt/atlassian/jira`. If you want to persist your data you should use a data volume for `/var/atlassian/jira`.
+## Upgrade
 
-#### Binding a host directory
+To upgrade to a more recent version of JIRA Software you can simply stop the `jira`
+container and start a new one based on a more recent image:
 
-```bash
-docker run -d -p 8080:8080 -v /home/user/jira-data:/var/atlassian/jira acntech/adop-jira
-```
+    $> docker stop jira
+    $> docker rm jira
+    $> docker run ... (See above)
 
-Make sure that the jira user (with id 547) has read/write/execute permissions.
+As your data is stored in the data volume directory on the host it will still
+be available after the upgrade.
 
-If security is important follow the Atlassian recommendation:
-
-> Ensure that only the user running Jira can access the Jira home directory, and that this user has read, write and execute permissions, by setting file system permissions appropriately for your operating system.
-
+_Note: Please make sure that you **don't** accidentally remove the `jira`
+container and its volumes using the `-v` option._
 
 ## License
 
