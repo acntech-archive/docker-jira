@@ -5,6 +5,9 @@
 * Runs on *Oracle Java* 8.
 * Ready to be configured with *Nginx* as a reverse proxy (https available).
 
+## Note
+This Docker image was created in lack of official Attlasian Docker image of JIRA Software. However, best practices was used from the official [Attlasian Bitbucket Server image](https://bitbucket.org/atlassian/docker-atlassian-bitbucket-server/src/d61361b7e2a5c30df3cb51ec194dec39135259b6?at=master)
+
 ## Quick Start
 For the `JIRA_HOME` directory that is used to store the data we recommend mounting a host directory as a [data volume](https://docs.docker.com/engine/tutorials/dockervolumes/) :
 Set permissions for the data directory so that the runuser can write to it:
