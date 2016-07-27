@@ -78,6 +78,8 @@ $> docker run -d -p 8080:8080 acntech/adop-jira -s -n example.com -p 443 -c jira
 
 ## Upgrade
 
+Refer to [Upgrading JIRA applications manually](https://confluence.atlassian.com/adminjiraserver071/upgrading-jira-applications-manually-802592252.html)
+
 To upgrade to a more recent version of JIRA Software you can simply stop the `jira`
 container and start a new one based on a more recent image:
 
