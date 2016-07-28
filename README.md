@@ -11,7 +11,7 @@ _JIRA Software_ is intended for use by software development teams and includes _
 
 > [wikipedia.org/wiki/Jira_(software)](https://en.wikipedia.org/wiki/Jira_(software))
 
-![](logo.png =250x)
+<img src="logo.png" alt="Logo" width="450px"/>
 
 # How to use this image.
 
