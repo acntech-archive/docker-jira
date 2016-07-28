@@ -10,12 +10,6 @@ RUN apt-get update -qq \
     && apt-get autoremove --yes \
     && rm -rf /var/lib/{apt,dpkg,cache,log}/
 
-# Use the default unprivileged account. This could be considered bad practice
-# on systems where multiple processes end up being executed by 'daemon' but
-# here we only ever run one process anyway.
-ENV RUN_USER        daemon
-ENV RUN_GROUP       daemon
-
 # Data directory for JIRA Software
 # https://confluence.atlassian.com/adminjiraserver071/jira-application-home-directory-802593036.html
 ENV JIRA_HOME          /var/atlassian/application-data/jira
@@ -27,21 +21,34 @@ ENV JIRA_INSTALL_DIR   /opt/atlassian/jira
 ENV JIRA_VERSION       7.1.9
 ENV DOWNLOAD_URL       https://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-software-${JIRA_VERSION}.tar.gz
 
+# Create JIRA application user, can be overwritten by providing -u option in docker run
+# https://docs.docker.com/engine/reference/run/#/user
+ARG user=jira
+ARG group=jira
+ARG uid=1000
+ARG gid=1000
+
+# JIRA is running with user `jira`, uid = 1000
+# If you bind mount a volume from the host or a data container,
+# ensure you use the same uid
+RUN mkdir -p $(dirname $JIRA_HOME) \
+    && groupadd -g ${gid} ${group} \
+    && useradd -d "$JIRA_HOME" -u ${uid} -g ${gid} -m -s /bin/bash ${user}
 
 RUN mkdir -p                                ${JIRA_HOME} \
     && mkdir -p                             ${JIRA_HOME}/caches/indexes \
     && chmod -R 700                         ${JIRA_HOME} \
-    && chown -R ${RUN_USER}:${RUN_GROUP}    ${JIRA_HOME} \
+    && chown -R ${user}:${group}            ${JIRA_HOME} \
     && mkdir -p                             ${JIRA_INSTALL_DIR}/conf/Catalina \
     && curl -L --silent                     ${DOWNLOAD_URL} | tar -xz --strip=1 -C "$JIRA_INSTALL_DIR" \
     && chmod -R 700                         ${JIRA_INSTALL_DIR}/conf \
     && chmod -R 700                         ${JIRA_INSTALL_DIR}/logs \
     && chmod -R 700                         ${JIRA_INSTALL_DIR}/temp \
     && chmod -R 700                         ${JIRA_INSTALL_DIR}/work \
-    && chown -R ${RUN_USER}:${RUN_GROUP}    ${JIRA_INSTALL_DIR}/conf \
-    && chown -R ${RUN_USER}:${RUN_GROUP}    ${JIRA_INSTALL_DIR}/logs \
-    && chown -R ${RUN_USER}:${RUN_GROUP}    ${JIRA_INSTALL_DIR}/temp \
-    && chown -R ${RUN_USER}:${RUN_GROUP}    ${JIRA_INSTALL_DIR}/work \
+    && chown -R ${user}:${group}            ${JIRA_INSTALL_DIR}/conf \
+    && chown -R ${user}:${group}            ${JIRA_INSTALL_DIR}/logs \
+    && chown -R ${user}:${group}            ${JIRA_INSTALL_DIR}/temp \
+    && chown -R ${user}:${group}            ${JIRA_INSTALL_DIR}/work \
     && sed --in-place                       "s/java version/openjdk version/g" "${JIRA_INSTALL_DIR}/bin/check-java.sh" \
     && echo -e                              "\njira.home=$JIRA_HOME" >> "${JIRA_INSTALL_DIR}/atlassian-jira/WEB-INF/classes/jira-application.properties" \
     && ln --symbolic                        "/usr/lib/x86_64-linux-gnu/libtcnative-1.so" "${JIRA_INSTALL_DIR}/lib/libtcnative-1.so" \
@@ -51,7 +58,7 @@ COPY        docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
 RUN chmod +x /docker-entrypoint.sh
 
-USER        ${RUN_USER}:${RUN_GROUP}
+USER        ${user}:${group}
 
 # HTTP Port
 EXPOSE      8080
