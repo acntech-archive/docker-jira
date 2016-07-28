@@ -42,7 +42,8 @@ $ docker run -d -p 8080:8080 --name jira \
         -v "/your/home:/var/atlassian/application-data/jira" \
         acntech/adop-jira
 ```
-This will store the JIRA data in `/your/home` on the host. Ensure that `/your/home` is accessible by the `jira` user in container (`jira` user - uid `1000`) or use [-u](https://docs.docker.com/engine/reference/run/#/user) `some_other_user` parameter with `docker run`.
+This will store the JIRA data in `/your/home` on the host. 
+Ensure that `/your/home` is accessible by the `jira` user in container (`jira` user - uid `1000`) or use [-u](https://docs.docker.com/engine/reference/run/#/user) `some_other_user` parameter with `docker run`.
 
 ### Alt 3: Configure reverse proxy
 
