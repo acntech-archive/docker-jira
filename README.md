@@ -11,6 +11,8 @@ _JIRA Software_ is intended for use by software development teams and includes _
 
 > [wikipedia.org/wiki/Jira_(software)](https://en.wikipedia.org/wiki/Jira_(software))
 
+![](logo.png =250x)
+
 # How to use this image.
 
 This image is based on official [java:8 (JDK)](https://github.com/docker-library/docs/tree/master/java) and installs Atlassian JIRA Software 7.1.9. It is also enabled for use with reverse proxy by providing environment variables as explained further down in this README.
@@ -149,3 +151,13 @@ You can also reach image maintainers mentioned in the [Dockerfile](Dockerfile).
 You are invited to contribute new features, fixes, or updates, large or small; we are always thrilled to receive pull requests, and do our best to process them as fast as we can.
 
 Before you start to code, we recommend discussing your plans through a [GitHub issue](https://github.com/acntech/docker-jira/issues), especially for more ambitious contributions. This gives other contributors a chance to point you in the right direction, give you feedback on your design, and help you find out if someone else is working on the same thing.
+
+### Recommended Reading
+- [Docker Engine](https://docs.docker.com/engine/)
+- [Docker Compose](https://docs.docker.com/compose/)
+- [Docker Machine](https://docs.docker.com/machine/)
+- [Dockerfile reference](https://docs.docker.com/engine/reference/builder/)
+- [Best practices for writing Dockerfiles](https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices/)
+- [Docker run reference](https://docs.docker.com/engine/reference/run/)
+- [Docker Cheat Sheet](https://github.com/wsargent/docker-cheat-sheet)
+
