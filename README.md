@@ -23,6 +23,7 @@ We want to give credit to following Docker images that has been used as inspirat
 - [atlassian/bitbucket-server](https://bitbucket.org/atlassian/docker-atlassian-bitbucket-server)
 - [cptactionhank/docker-atlassian-jira-software](https://github.com/cptactionhank/docker-atlassian-jira-software)
 - [ahaasler/docker-jira](https://github.com/ahaasler/docker-jira)
+- [mhubig/atlassian](https://github.com/mhubig/atlassian)
 
 ### Alt 1: Run with minimum config
 
@@ -151,6 +152,8 @@ You can also reach image maintainers mentioned in the [Dockerfile](Dockerfile).
 You are invited to contribute new features, fixes, or updates, large or small; we are always thrilled to receive pull requests, and do our best to process them as fast as we can.
 
 Before you start to code, we recommend discussing your plans through a [GitHub issue](https://github.com/acntech/docker-jira/issues), especially for more ambitious contributions. This gives other contributors a chance to point you in the right direction, give you feedback on your design, and help you find out if someone else is working on the same thing.
+
+Please make sure to raise a Pull Request for your changes to be merged into master branch.
 
 ### Recommended Reading
 - [Docker Engine](https://docs.docker.com/engine/)
