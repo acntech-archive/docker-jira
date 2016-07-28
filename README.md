@@ -164,4 +164,5 @@ Please make sure to raise a Pull Request for your changes to be merged into mast
 - [Best practices for writing Dockerfiles](https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices/)
 - [Docker run reference](https://docs.docker.com/engine/reference/run/)
 - [Docker Cheat Sheet](https://github.com/wsargent/docker-cheat-sheet)
+- [Gracefully Stopping Docker Containers](https://www.ctl.io/developers/blog/post/gracefully-stopping-docker-containers/)
 

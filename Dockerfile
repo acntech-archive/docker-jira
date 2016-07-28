@@ -71,4 +71,5 @@ VOLUME      ["${JIRA_HOME}"]
 WORKDIR     $JIRA_INSTALL_DIR
 
 # Run Atlassian JIRA as a foreground process by default.
+# See https://confluence.atlassian.com/jirakb/jira-application-startup-and-shutdown-scripts-653951272.html#JIRAapplicationStartupandShutdownScripts-StartingJIRA
 CMD         ["bin/start-jira.sh", "-fg"]
