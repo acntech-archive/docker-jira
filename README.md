@@ -99,9 +99,9 @@ Catalina properties:
 `Xmx` : JVM Maximum Memory (in this case 2 GB). [More information](https://confluence.atlassian.com/adminjiraserver070/increasing-jira-application-memory-749383419.html)
 `atlassian.plugins.enable.wait` : Time in seconds JIRA waits for plugins to load eg. 300. [More information](https://confluence.atlassian.com/display/JIRAKB/JIRA+applications+System+Plugin+Timeout+While+Waiting+for+Add-ons+to+Enable)
 
-### JIRA Setup
+### Using external Oracle database
 After container has started for the first time you can access JIRA Software UI at http://localhost:8080 and start initial setup. 
-If you would like to use Oracle as database, please take a look at [setup-jira-oracledb.sql](sql/setup-jira-oracledb.sql) and official [documentation](https://confluence.atlassian.com/adminjiraserver071/connecting-jira-applications-to-oracle-802592181.html).
+If you would like to use external Oracle 12c database, please take a look at [setup-jira-oracledb.sql](sql/setup-jira-oracledb.sql) and official [documentation](https://confluence.atlassian.com/adminjiraserver071/connecting-jira-applications-to-oracle-802592181.html).
 
 ### Upgrade
     
