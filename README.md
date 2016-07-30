@@ -25,7 +25,7 @@ We want to give credit to following Docker images that has been used as inspirat
 - [ahaasler/docker-jira](https://github.com/ahaasler/docker-jira)
 - [mhubig/atlassian](https://github.com/mhubig/atlassian)
 
-### Alt 1: Run with minimum config
+### Alt 1: Run container with minimum config
 
 ```console
 $ docker run -d -p 8080:8080 --name jira acntech/adop-jira
@@ -35,7 +35,7 @@ You are now ready to start configuration of JIRA (choosing license model and oth
 
 This will store the workspace in `/var/atlassian/application-data/jira`. All JIRA data lives in there - including plugins, configuration, attachments ++ (see [JIRA application home directory](https://confluence.atlassian.com/adminjiraserver071/jira-application-home-directory-802593036.html) ). You will probably want to make that a persistent volume (recommended)
 
-### Alt 2: Configure persisting volume
+### Alt 2: Run container with persisting volume
 
 ```console
 $ docker run -d -p 8080:8080 --name jira \
@@ -45,7 +45,7 @@ $ docker run -d -p 8080:8080 --name jira \
 This will store the JIRA data in `/your/home` on the host. 
 Ensure that `/your/home` is accessible by the `jira` user in container (`jira` user - uid `1000`) or use [-u](https://docs.docker.com/engine/reference/run/#/user) `some_other_user` parameter with `docker run`.
 
-### Alt 3: Configure reverse proxy
+### Alt 3: Run container with reverse proxy
 
 If you have a reverse proxy, such as [Nginx](https://confluence.atlassian.com/jirakb/integrating-jira-with-nginx-426115340.html) or [Apache HTTP Server](https://confluence.atlassian.com/kb/integrating-apache-http-server-reverse-proxy-with-jira-753894357.html) in front of your JIRA application you need to provide proxy settings:
 
@@ -81,7 +81,7 @@ server {
     }
 }
 ```
-### Alt 4: Configure custom memory and plugin timeout properties
+### Alt 4: Run container with custom memory and plugin timeout properties
 
 ```console
 $ docker run -d -p 8080:8080 --name jira \
@@ -98,6 +98,10 @@ Catalina properties:
 `Xms` : JVM Minimum Memory (in this case 1 GB). [More information](https://confluence.atlassian.com/adminjiraserver070/increasing-jira-application-memory-749383419.html)
 `Xmx` : JVM Maximum Memory (in this case 2 GB). [More information](https://confluence.atlassian.com/adminjiraserver070/increasing-jira-application-memory-749383419.html)
 `atlassian.plugins.enable.wait` : Time in seconds JIRA waits for plugins to load eg. 300. [More information](https://confluence.atlassian.com/display/JIRAKB/JIRA+applications+System+Plugin+Timeout+While+Waiting+for+Add-ons+to+Enable)
+
+### JIRA Setup
+After container has started for the first time you can access JIRA Software UI at http://localhost:8080 and start initial setup. 
+If you would like to use Oracle as database, please take a look at [setup-jira-oracledb.sql](sql/setup-jira-oracledb.sql) and official [documentation](https://confluence.atlassian.com/adminjiraserver071/connecting-jira-applications-to-oracle-802592181.html).
 
 ### Upgrade
     
@@ -165,4 +169,5 @@ Please make sure to raise a Pull Request for your changes to be merged into mast
 - [Docker run reference](https://docs.docker.com/engine/reference/run/)
 - [Docker Cheat Sheet](https://github.com/wsargent/docker-cheat-sheet)
 - [Gracefully Stopping Docker Containers](https://www.ctl.io/developers/blog/post/gracefully-stopping-docker-containers/)
+- [Installing JIRA Applications](https://confluence.atlassian.com/adminjiraserver071/installing-jira-applications-802592161.html)
 
