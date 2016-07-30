@@ -170,4 +170,5 @@ Please make sure to raise a Pull Request for your changes to be merged into mast
 - [Docker Cheat Sheet](https://github.com/wsargent/docker-cheat-sheet)
 - [Gracefully Stopping Docker Containers](https://www.ctl.io/developers/blog/post/gracefully-stopping-docker-containers/)
 - [Installing JIRA Applications](https://confluence.atlassian.com/adminjiraserver071/installing-jira-applications-802592161.html)
+- [Getting started with JIRA Software](https://confluence.atlassian.com/jirasoftwarecloud/getting-started-with-jira-software-764477795.html)
 
