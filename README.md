@@ -28,17 +28,19 @@ We want to give credit to following Docker images that has been used as inspirat
 ### Alt 1: Run container with minimum config
 
 ```console
-$ docker run -d -p 8080:8080 --name jira acntech/adop-jira
+$ docker run --restart=unless-stopped -d -p 8080:8080 --name jira acntech/adop-jira
 ```
 
 You are now ready to start configuration of JIRA (choosing license model and other initial configuration) by entering http://localhost:8080. We recommend that you look at logs (`docker logs jira -f`) while initial configuration is done to make sure everything is running smooth.
 
 This will store the workspace in `/var/atlassian/application-data/jira`. All JIRA data lives in there - including plugins, configuration, attachments ++ (see [JIRA application home directory](https://confluence.atlassian.com/adminjiraserver071/jira-application-home-directory-802593036.html) ). You will probably want to make that a persistent volume (recommended)
 
+The `--restart=unless-stopped` option is set to automatically restart the docker container in case of failure and server reboot, but not if the container has been set to stop state. [More information](https://docs.docker.com/engine/reference/run/#/restart-policies-restart).
+
 ### Alt 2: Run container with persisting volume
 
 ```console
-$ docker run -d -p 8080:8080 --name jira \
+$ docker run --restart=unless-stopped -d -p 8080:8080 --name jira \
         -v "/var/lib/docker/data/jira:/var/atlassian/application-data/jira" \
         acntech/adop-jira
 ```
@@ -69,7 +71,7 @@ hello
 If you have a reverse proxy, such as [Nginx](https://confluence.atlassian.com/jirakb/integrating-jira-with-nginx-426115340.html) or [Apache HTTP Server](https://confluence.atlassian.com/kb/integrating-apache-http-server-reverse-proxy-with-jira-753894357.html) in front of your JIRA application you need to provide proxy settings:
 
 ```console
-$ docker run -d -p 8080:8080 --name jira \
+$ docker run --restart=unless-stopped -d -p 8080:8080 --name jira \
         -v "/var/lib/docker/data/jira:/var/atlassian/application-data/jira" \
         -e "X_PROXY_NAME=example.com" \
         -e "X_PROXY_PORT=80" \
@@ -103,7 +105,7 @@ server {
 ### Alt 4: Run container with custom memory and plugin timeout properties
 
 ```console
-$ docker run -d -p 8080:8080 --name jira \
+$ docker run --restart=unless-stopped -d -p 8080:8080 --name jira \
       -v "/var/lib/docker/data/jira:/var/atlassian/application-data/jira" \
       -e "X_PROXY_NAME=example.com" \
       -e "X_PROXY_PORT=80" \
