@@ -39,11 +39,30 @@ This will store the workspace in `/var/atlassian/application-data/jira`. All JIR
 
 ```console
 $ docker run -d -p 8080:8080 --name jira \
-        -v "/your/home:/var/atlassian/application-data/jira" \
+        -v "/var/lib/docker/data/jira:/var/atlassian/application-data/jira" \
         acntech/adop-jira
 ```
-This will store the JIRA data in `/your/home` on the host. 
-Ensure that `/your/home` is accessible by the `jira` user in container (`jira` user - uid `1000`) or use [-u](https://docs.docker.com/engine/reference/run/#/user) `some_other_user` parameter with `docker run`.
+This will store the JIRA data in `/var/lib/docker/data/jira` on the host. 
+Ensure that `/var/lib/docker/data/jira` is accessible by the `jira` user in container (`jira` user - uid `1000`) or use [-u](https://docs.docker.com/engine/reference/run/#/user) `some_other_user` parameter with `docker run`.
+
+> WARNING! Please note that [boot2docker](https://github.com/boot2docker/boot2docker), which is used to host Docker on Windows and Mac when spinning up new [Docker Machine](https://docs.docker.com/machine/overview/), **removes** automatically **all folders** but `/var/lib/docker` and `/var/lib/boot2docker` in case of restarting the docker-machine. See [Persistent data](https://github.com/boot2docker/boot2docker#persist-data) and [ServerFault thread](http://serverfault.com/questions/722085/why-does-docker-machine-clear-data-on-restart). See following example
+```console
+$ docker-machine ssh test-machine
+$ docker run -v /data:/data --name mydata busybox true
+$ docker run --volumes-from mydata busybox sh -c "echo hello >/data/hello"
+$ docker run --volumes-from mydata busybox cat /data/hello
+hello
+$ docker run -v /var/lib/docker/data:/data --name mydata2 busybox true
+$ docker run --volumes-from mydata2 busybox sh -c "echo hello >/data/hello"
+$ docker run --volumes-from mydata2 busybox cat /data/hello
+hello
+$ docker-machine restart test-machine
+$ docker-machine ssh test-machine
+$ docker run --volumes-from mydata busybox cat /data/hello
+cat: can't open '/data/hello': No such file or directory
+$ docker run --volumes-from mydata2 busybox cat /data/hello
+hello
+```
 
 ### Alt 3: Run container with reverse proxy
 
@@ -51,7 +70,7 @@ If you have a reverse proxy, such as [Nginx](https://confluence.atlassian.com/ji
 
 ```console
 $ docker run -d -p 8080:8080 --name jira \
-        -v "/your/home:/var/atlassian/application-data/jira" \
+        -v "/var/lib/docker/data/jira:/var/atlassian/application-data/jira" \
         -e "X_PROXY_NAME=example.com" \
         -e "X_PROXY_PORT=80" \
         -e "X_PROXY_SCHEME=http" \
@@ -65,7 +84,7 @@ Environment Variables:
 `X_PROXY_SCHEME`    : Sets the connector scheme (in this case `http`).
 `X_PATH`            : Sets the context path (in this case `/jira` so you would access JIRA http://localhost:8080/jira).
 
-_IMPORTANT_! This configuration will be only written to `${JIRA_INSTALL_DIR}/conf/server.xml` file once, when one or more of env variables are provided. Next time you stop/start container these parameters will be ignored.
+> IMPORTANT! This configuration will be only written to `${JIRA_INSTALL_DIR}/conf/server.xml` file once, when one or more of env variables are provided. Next time you stop/start container these parameters will be ignored.
 
 You will also need to configure reverse proxy, _example_ of such configuration for _Nginx_ (which is running at same [Docker host and network](https://docs.docker.com/engine/userguide/networking/dockernetworks/) as JIRA) is:
 ```
@@ -85,7 +104,7 @@ server {
 
 ```console
 $ docker run -d -p 8080:8080 --name jira \
-      -v "/your/home:/var/atlassian/application-data/jira" \
+      -v "/var/lib/docker/data/jira:/var/atlassian/application-data/jira" \
       -e "X_PROXY_NAME=example.com" \
       -e "X_PROXY_PORT=80" \
       -e "X_PROXY_SCHEME=http" \
@@ -116,8 +135,8 @@ container and start a new one based on a more recent Docker image:
 
 As your data is stored in the data volume directory on the host it will still be available after the upgrade.
 
-_IMPORTANT: Please make sure that you **don't** accidentally remove the `jira`
-container and its volumes using the `-v` option._
+> IMPORTANT: Please make sure that you **don't** accidentally remove the `jira`
+container and its volumes using the `-v` option.
 
 
 ### Backup 
