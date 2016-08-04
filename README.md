@@ -39,7 +39,7 @@ The `--restart=unless-stopped` option is set to automatically restart the docker
 
 ### Alt 2: Run container with persisting volume
 
-##### Mount a host directory as a data volume¶
+##### Mount a host directory as a data volume
 
 This strategy is mostly suited for testing locally as the container will be dependent on the filesystem of the host.
 
