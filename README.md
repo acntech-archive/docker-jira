@@ -41,7 +41,8 @@ The `--restart=unless-stopped` option is set to automatically restart the docker
 
 ##### Mount a host directory as a data volume
 
-This strategy is mostly suited for testing locally as the container will be dependent on the filesystem of the host.
+This strategy is mostly suited for testing locally as the container will be dependent on the filesystem of the host. 
+This might cause issues with regards to access rights on the mounted folder from the host filesystem. 
 
 ```console
 $ docker run --restart=unless-stopped -d -p 8080:8080 --name jira \
