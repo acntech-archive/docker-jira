@@ -1,0 +1,8 @@
+version: '2'
+services:
+  jira:
+    build: .
+    ports:
+    - "80:8080"
+    volumes:
+    - ./dbconfig.xml:/var/atlassian/application-data/jira/dbconfig.xml
