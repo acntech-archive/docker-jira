@@ -80,7 +80,7 @@ Recommended approach for mounting data outside of the container. The data volume
 $ docker volume create --name jira_volume
 $ docker run --restart=unless-stopped -d -p 80:8080 --name jira -v jira_volume:/var/atlassian/application-data/jira acntech/adop-jira
 ```
-This will map the "jira_volume" to the containers "/var/atlassian/application-data/jira acntech/adop-jira" directory.
+This will map the data volume `jira_volume` to the containers `/var/atlassian/application-data/jira acntech/adop-jira` directory.
 
 ### Alt 3: Run container with reverse proxy
 
